@@ -45,7 +45,7 @@ class TagTreeWidget(QtWidgets.QTreeWidget, Factory):
 
     def contextMenuEvent(self, event):
         tag_hovered = self.find_tag_hovered(event.pos(), self.invisibleRootItem())
-        menu = TagMenu(self, tag_hovered)
+        menu = TagMenu(self) #, tag_hovered)
         menu.tag_widget = tag_hovered
         menu.exec_(self.mapToGlobal(event.pos()))
 

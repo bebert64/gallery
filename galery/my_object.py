@@ -15,6 +15,15 @@ class BaseModel(Model):
 class MyObject(BaseModel):
     """Object model"""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.actions = [
+            ("action test", lambda: print("test")),
+            ("action id", self.action1),
+        ]
+
     id = AutoField()
     name = CharField()
 
+    def action1(self):
+        print(self.id)

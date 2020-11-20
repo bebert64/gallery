@@ -46,7 +46,7 @@ class CellWidget(QtWidgets.QWidget, Factory):
         self.is_mouse_down = False
         self.overlay = None
 
-    def finish_init(self, index, my_object):
+    def finish_init(self, my_object):
         """
         Finishes the initialization, after the widget is created.
 
@@ -61,7 +61,7 @@ class CellWidget(QtWidgets.QWidget, Factory):
         """
 
         self.object = my_object
-        self.index = index
+        self.index = my_object.id
         self.add_overlay()
         self.add_image()
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
@@ -184,6 +184,8 @@ class CellSignals(QtCore.QObject):
     ----------
     clicked: QtCore.Signal
         A signal emited when the cell is clicked.
+    cell: CellWidget
+        The cell emiting the signal
     """
 
     clicked = QtCore.Signal()

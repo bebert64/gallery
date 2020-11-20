@@ -21,11 +21,11 @@ class GridWidget(QtWidgets.QWidget, Factory):
     Attributes
     ----------
     cells:
-
+        List of the cells currently displayed in the widget
     objects:
-
+        List of the objects to de displayed in the grid.
     selection:
-
+        List of indexes of the objects selected.
     """
 
     def __init__(self, *args, objects=None, **kwargs):
@@ -54,8 +54,8 @@ class GridWidget(QtWidgets.QWidget, Factory):
         my_object = self.objects[object_index]
         # The cell index will be len(self.cells) just before we append it (as list
         # numbering starts at 0 in python)
-        cell_index = len(self.cells)
-        cell = CellWidget.create_widget(cell_index, my_object, parent=self)
+        # cell_index = len(self.cells)
+        cell = CellWidget.create_widget(my_object, parent=self)
         cell.signals.clicked.connect(self.cell_clicked)
         self.cells.append(cell)
         if cell.object.id in self.selection:

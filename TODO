@@ -1,0 +1,9 @@
+TODO : redraw Tree Widget
+TODO : add a tag / add a folder
+TODO : repackage / refactor to return a widget, not a main_window
+TODO : the main entry point should be my_widget = Galery(MyObject), the MyObject being the class to be represented
+TODO : try to create all cells at first, and only draw them (not recreate them every time)
+TODO : insert row in grid
+TODO : create hook to add tag function
+TODO : refactor the database to add the "right" tables only
+TODO : create a cli for managing the database

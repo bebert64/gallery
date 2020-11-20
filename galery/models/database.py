@@ -12,6 +12,7 @@ from .tags import Tag, ObjectTag
 
 
 def create_tables():
+    """Creates specific table for tags and objects in the database."""
     config.database.connect()
     config.database.create_tables([Tag, ObjectTag, MyObject])
 

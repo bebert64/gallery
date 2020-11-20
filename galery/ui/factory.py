@@ -27,13 +27,13 @@ class Factory:
 
     METHODS
     -------
-    create_widget:
-        See create_widget documenation
-    finish_init:
+    create_widget
+    finish_init: optional
         In some (most ?) cases, we need to do some actions AFTER the widget is created,
         to access its attributes. The finish_init is called after the widget creation,
-        during create_widget. Arguments should passed to create_widget will in turn
-        be passed to finish_init.
+        during create_widget. Arguments passed to create_widget will in turn be passed
+        to finish_init.
+
     """
 
     loader = None
@@ -48,6 +48,7 @@ class Factory:
         -------
         Widget
             The widget created from the ui file.
+
         """
         if cls.UI_FILE_NAME is None:
             cls.UI_FILE_NAME = cls.__module__.split(".")[-1] + ".ui"

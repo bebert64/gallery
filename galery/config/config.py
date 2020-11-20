@@ -26,8 +26,8 @@ class Config:
         A dictionnary created from the config.toml file.
     app_folder: Path
         The path to the application folder.
-    database:
-
+    database: Peewee.SqliteDatabase
+        The database object containing the tags and the objects.
     object:
     """
 
@@ -36,7 +36,6 @@ class Config:
             app_folder = Path(sys.executable).parent
         else:
             import __main__  # pylint: disable=import-outside-toplevel
-
             app_folder = Path(__main__.__file__).parent.absolute()
         toml_path = app_folder / "config" / "config.toml"
         self.toml = toml.load(str(toml_path.absolute()))

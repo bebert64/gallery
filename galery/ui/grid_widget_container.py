@@ -64,7 +64,6 @@ class GridWidgetContainer(QtWidgets.QWidget, Factory):
             pass
         else:
             if len(windows_opened) > 1:
-                print(len(windows_opened))
                 for window in windows_opened:
                     try:
                         keep_open = window.title() == "MainWindow"
