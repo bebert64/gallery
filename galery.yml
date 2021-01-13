@@ -1,4 +1,4 @@
-name: galery
+name: gallery
 channels:
     - defaults
     - conda-forge

@@ -1,9 +1,66 @@
-TODO : redraw Tree Widget
-TODO : add a tag / add a folder
-TODO : repackage / refactor to return a widget, not a main_window
-TODO : the main entry point should be my_widget = Galery(MyObject), the MyObject being the class to be represented
-TODO : try to create all cells at first, and only draw them (not recreate them every time)
-TODO : insert row in grid
-TODO : create hook to add tag function
-TODO : refactor the database to add the "right" tables only
-TODO : create a cli for managing the database
+
+V1 is done when :
+    Clean code
+    __future__ annotation everywhere
+    Remove all finish_init and replace with create_specific_widget
+    Remove all occurences of get_ancestor_by_classname => replace with get_ancestor_by_class
+    Recheck code for things that could be setup in the ui files (and actually move them
+        to the ui files...)
+    Write documentation + correct Readme.md
+    
+    
+Sphinx:
+    clean config
+    clean code modify_toc
+    clean code create_pyside2_aliases / create_peewee_aliases (in Perso/Code/Python)
+    move all additional functions to additional files and call them from conf
+    clean code in additional files
+    add support for type aliases
+        (check https://github.com/sphinx-doc/sphinx/pull/8007/files)
+    add support for transforming MyClass into :class:path.to.myclass
+    edit html to remove unwanted information (fully qualifed type hint)
+    move modif from sphinx.ext.napoleon.docstring to external file and monkeypatch
+            - in _format_field
+            - in _load_custom_sections
+        => keep the modif when updating sphinx
+    create tool to allow for toc_modification and keep them when rewriting TOC in automatic
+        -members to exclude
+    remove fields from default value after peewee.
+        Example : in models.tags.Tag
+            id: int = <AutoField: Tag.id>   =>    id: int
+    correct formating of type hint in Class attributes. Ex
+        Example : in models.tags. ObjectTag
+            my_object: Type[peewee.Model]   =>   my_object: Type[Model] (avec des jolis liens :) )
+
+
+    
+Nice to have for next version(s) :
+    v2
+        When refresh tab, keep selection where possible (= keep in selection the id
+            of objects still present after the refresh)
+        Remember tabs from last session
+        Select all with CRTL + A
+        Add selecting range of cells by using SHIFT (need cell index ?)
+        Display the number of elements selected
+        Add elements to the tag tree allowing to filter by attributes of my_object
+        Create a parameter with a list of attributes to add to the tag tree for filters
+        Sort by my_object attribute (+ buttons to select an ordering)
+        Icons for different type of tags
+        Popup with name and tag info (and rating)
+        Tag position in the tree
+        Move tag by drag and drop
+        When using a view, display full request in statusbar (instead of its name)
+        When renaming view from tag tree, update tab name as well
+
+    v3
+        Link between tags
+        Buttons to change between cell sizes
+        Create_table at init time if not existing
+        Create a way to choose intervalls for numerical values of specific attributes (duration)
+        Package as a wheel for pip installation
+        Grid view with attributes columns (similar to an Excel sheet)
+        Create hook to add tag function
+        System to dynamically modify the query
+        Create a cli for managing the database
+        Search (object name and tag)
+        Thumbnails of different sizes to adapt to cell size + function to select the "right" size
