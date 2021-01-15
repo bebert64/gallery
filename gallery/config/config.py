@@ -92,16 +92,7 @@ class Config:
 
     """
 
-    MyTag: Type[peewee.Model]
-    """Model of a tag specific to MyObject, linked to the database given by the user."""
-
-    MyObjectTag: Type[peewee.Model]
-    """Model of the link between MyObject and MyTag."""
-
-    MyView: Type[View]
-    """Model of a view, linked to the database given by the user."""
-
-    cell_dimension: CellDimension = CellDimension.medium
+    _reserved_attribute_names: List[str]
 
     def __init__(
         self,
@@ -110,9 +101,14 @@ class Config:
         options: Optional[Options] = None,
     ):
         self.database: peewee.SqliteDatabase = database
-        self.MyObject: Type[peewee.Model] = MyObject
-        self._add_tag_related_attributes()
-        self._reserved_attribute_names: List[str] = self._get_reserved_attribute_names()
+        self.cell_dimension = CellDimension.medium
+        self._has_changed_cell_dimension: bool = False
+        self.models: Models = Models()
+        self._add_attributes(MyObject, options)
+
+    def _add_attributes(self, MyObject, options):
+        self._add_tag_related_attributes(MyObject)
+        self._reserved_attribute_names = self._get_reserved_attribute_names()
         self._add_attributes_from_toml_file()
         self._add_attributes_from_options(options)
 
@@ -158,20 +154,23 @@ class Config:
         package_path = config_folder_path.parent
         return package_path
 
-    def _add_tag_related_attributes(self) -> None:
-        self._add_attributes_linked_to_my_object()
+    def _add_tag_related_attributes(self, MyObject: Type[peewee.Model]) -> None:
+        self._add_attributes_linked_to_my_object(MyObject)
         self._add_view_attribute()
 
     def _add_view_attribute(self) -> None:
-        self.MyView = View
-        self.MyView._meta.database = (  # pylint: disable = no-member, protected-access
+        self.models.MyView = View
+        self.models.MyView._meta.database = (  # pylint: disable = no-member, protected-access
             self.database
         )
 
-    def _add_attributes_linked_to_my_object(self) -> None:
-        self.MyTag, self.MyObjectTag = tag_factory(self.database, self.MyObject)
-        self.MyObject.MyTag = self.MyTag
-        self.MyObject.MyObjectTag = self.MyObjectTag
+    def _add_attributes_linked_to_my_object(self, MyObject: Type[peewee.Model]) -> None:
+        self.models.MyObject = MyObject
+        MyTag, MyObjectTag = tag_factory(self.database, MyObject)
+        self.models.MyTag = MyTag
+        self.models.MyObjectTag = MyObjectTag
+        self.models.MyObject.MyTag = self.models.MyTag
+        self.models.MyObject.MyObjectTag = self.models.MyObjectTag
 
     def _add_attributes_from_toml_file(self) -> None:
         toml_file_path = self.get_package_folder() / "config" / "config.toml"
@@ -216,3 +215,29 @@ the application."""
         """The height of a cell in pixels."""
         zoom = self.cell_dimension.value
         return int(self.cell_height_default * zoom)
+
+    def change_cell_dimension(self, cell_dimension: CellDimension) -> None:
+        """Changes the cells dimension."""
+        self.cell_dimension = cell_dimension
+        self._has_changed_cell_dimension = True
+
+    def has_changed_cell_dimension(self) -> bool:
+        """
+        Whether the cell dimension has changed since the last time we drew the grid.
+        """
+        return self._has_changed_cell_dimension
+
+    def reset_has_changed_cell_dimension(self) -> None:
+        """Indicates the cell dimension change has been taken into account."""
+        self._has_changed_cell_dimension = False
+
+
+class Models:  # pylint: disable=too-few-public-methods
+
+    """Simple namespace to regroup all the peewee Model object in the config file."""
+    # A "real" SimpleNamespace object doesn't allow to type its own member.
+
+    MyObject: Type[peewee.Model]
+    MyTag: Type[peewee.Model]
+    MyObjectTag: Type[peewee.Model]
+    MyView: Type[peewee.Model]

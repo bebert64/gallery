@@ -1,14 +1,11 @@
+General
+    Move MyCustomWidget et Config to separate projects, and import them in gallery
+        => reuse them in other projects.
+    Update cookie cutter template
+    
 
-V1 is done when :
-    Clean code
-    __future__ annotation everywhere
-    Remove all finish_init and replace with create_specific_widget
-    Remove all occurences of get_ancestor_by_classname => replace with get_ancestor_by_class
-    Recheck code for things that could be setup in the ui files (and actually move them
-        to the ui files...)
-    Write documentation + correct Readme.md
-    
-    
+
+
 Sphinx:
     clean config
     clean code modify_toc
@@ -18,17 +15,19 @@ Sphinx:
     add support for type aliases
         (check https://github.com/sphinx-doc/sphinx/pull/8007/files)
     add support for transforming MyClass into :class:path.to.myclass
-    edit html to remove unwanted information (fully qualifed type hint)
     move modif from sphinx.ext.napoleon.docstring to external file and monkeypatch
             - in _format_field
             - in _load_custom_sections
         => keep the modif when updating sphinx
+        + treat any unknown section as custom section
     create tool to allow for toc_modification and keep them when rewriting TOC in automatic
         -members to exclude
-    remove fields from default value after peewee.
-        Example : in models.tags.Tag
-            id: int = <AutoField: Tag.id>   =>    id: int
-    correct formating of type hint in Class attributes. Ex
+    edit html
+        - to remove unwanted information (fully qualified type hint)
+        - remove fields from default value after peewee.
+            Example : in models.tags.Tag
+                id: int = <AutoField: Tag.id>   =>    id: int
+    correct formatting of type hint in Class attributes. Ex
         Example : in models.tags. ObjectTag
             my_object: Type[peewee.Model]   =>   my_object: Type[Model] (avec des jolis liens :) )
 
@@ -36,20 +35,19 @@ Sphinx:
     
 Nice to have for next version(s) :
     v2
+        Add elements to the tag tree allowing to filter by attributes of my_object
+        Create a parameter with a list of attributes to add to the tag tree for filters
+        Sort by my_object attribute (+ buttons to select an ordering)
         When refresh tab, keep selection where possible (= keep in selection the id
             of objects still present after the refresh)
         Remember tabs from last session
         Select all with CRTL + A
         Add selecting range of cells by using SHIFT (need cell index ?)
         Display the number of elements selected
-        Add elements to the tag tree allowing to filter by attributes of my_object
-        Create a parameter with a list of attributes to add to the tag tree for filters
-        Sort by my_object attribute (+ buttons to select an ordering)
         Icons for different type of tags
         Popup with name and tag info (and rating)
         Tag position in the tree
         Move tag by drag and drop
-        When using a view, display full request in statusbar (instead of its name)
         When renaming view from tag tree, update tab name as well
 
     v3

@@ -166,10 +166,10 @@ class WidgetItemTag(WidgetItemTagBase):
             self._add_tag(my_object_id)
 
     def _add_tag(self, my_object_id: types.MyObjectId) -> None:
-        self.config.MyObjectTag.get_or_create(my_object=my_object_id, tag=self.tag.id)
+        self.config.models.MyObjectTag.get_or_create(my_object=my_object_id, tag=self.tag.id)
 
     def _remove_tag(self, my_object_id: types.MyObjectId) -> None:
-        self.config.MyObjectTag.get(
+        self.config.models.MyObjectTag.get(
             my_object=my_object_id, tag=self.tag.id
         ).delete_instance()
 
@@ -237,8 +237,8 @@ class WidgetItemRating(WidgetItem):
     def get_my_objects(self) -> types.MyObjectSet:
         """Gets all objects rated with its rating."""
         my_objects = set(
-            self.config.MyObject.select().where(
-                self.config.MyObject.rating == self.rating
+            self.config.models.MyObject.select().where(
+                self.config.models.MyObject.rating == self.rating
             )
         )
         return my_objects
@@ -253,7 +253,7 @@ class WidgetItemRating(WidgetItem):
         dropped on the widget item corresponding to the rating 0.
 
         """
-        my_object = self.config.MyObject.get(id=object_id)
+        my_object = self.config.models.MyObject.get(id=object_id)
         my_object.rating = self.rating
         my_object.save()
 
@@ -280,7 +280,7 @@ class WidgetItemAll(WidgetItem):
 
     def get_my_objects(self) -> types.MyObjectSet:
         """Gets all objects from the database."""
-        my_objects = set(self.config.MyObject.select())
+        my_objects = set(self.config.models.MyObject.select())
         return my_objects
 
 
@@ -531,15 +531,15 @@ class TagTreeWidget(
         self, widget_item_tag: WidgetItemTagBase
     ) -> List[Tag]:
         children = widget_item_tag.tag.children
-        tags_ordered_alphabetically = children.order_by(self.config.MyTag.name)
+        tags_ordered_alphabetically = children.order_by(self.config.models.MyTag.name)
         return tags_ordered_alphabetically
 
     def _get_tags_at_root(self) -> List[Tag]:
-        tags = self.config.MyTag.select().where(self.config.MyTag.parent_id.is_null())
+        tags = self.config.models.MyTag.select().where(self.config.models.MyTag.parent_id.is_null())
         return tags
 
     def _add_widget_items_rating(self) -> None:
-        need_widget_items_rating = hasattr(self.config.MyObject, "rating")
+        need_widget_items_rating = hasattr(self.config.models.MyObject, "rating")
         if need_widget_items_rating:
             rating_folder_widget = self._create_folder("Ratings")
             self._add_widget_items_rating_to_folder(rating_folder_widget)
@@ -561,7 +561,7 @@ class TagTreeWidget(
         self._add_widget_items_view_to_folder(views_folder)
 
     def _add_widget_items_view_to_folder(self, views_folder: WidgetItemFolder) -> None:
-        for view in self.config.MyView.select():
+        for view in self.config.models.MyView.select():
             tag_widget_view = WidgetItemView(views_folder, view)
             self.widget_items[tag_widget_view.widget_item_id] = tag_widget_view
 

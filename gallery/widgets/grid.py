@@ -169,8 +169,6 @@ class CellWidget(QtWidgets.QWidget, MyCustomWidget):
         #     self.my_popup.setParent(None)
         #     self.my_popup = None
         # buttons = event.buttons()
-        # print(f"{(event.buttons() == QtCore.Qt.LeftButton)=}")
-        # print(f"{event.modifiers()=}")
         need_start_drag = self._need_start_drag(event)
         if need_start_drag:
             my_drag = drag.DragFromGrid(self)
@@ -383,11 +381,14 @@ class TabWidget(QtWidgets.QWidget, MyCustomWidget):
     def _need_resize_grid_widget_container_width(self) -> bool:
         return self.tab_parameters.need_resize_grid_container_width()
 
-    def _update_query_parameters_has_changed(self) -> None:
+    def _update_has_changed_query_parameters(self) -> None:
         self.query_parameters.reset_has_changed_attribute()
 
     def _update_tab_parameters(self) -> None:
         self.tab_parameters.update_current_parameters()
+
+    def _update_has_changed_cell_dimension(self) -> None:
+        self.config.reset_has_changed_cell_dimension()
 
     def _is_grid_empty(self) -> bool:
         return len(self.get_my_objects_list()) == 0
@@ -395,7 +396,8 @@ class TabWidget(QtWidgets.QWidget, MyCustomWidget):
     def _need_redraw_grid_widget(self) -> bool:
         need_from_tab_parameter = self.tab_parameters.need_redraw_cells()
         need_from_query = self.query_parameters.has_changed
-        return need_from_tab_parameter or need_from_query
+        need_from_config = self.config.has_changed_cell_dimension()
+        return need_from_tab_parameter or need_from_query or need_from_config
 
     def _draw_grid_empty(self) -> None:
         self._remove_all_cells()
@@ -446,7 +448,8 @@ class TabWidget(QtWidgets.QWidget, MyCustomWidget):
         self._remove_all_cells()
         self._repopulate_grid()
         self._resize_width()
-        self._update_query_parameters_has_changed()
+        self._update_has_changed_query_parameters()
+        self._update_has_changed_cell_dimension()
 
     def _resize_hidden_containers(self) -> None:
         empty_cells_top_widget_height = self._get_empty_cells_top_widget_height()

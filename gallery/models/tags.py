@@ -101,7 +101,7 @@ class ObjectTag(Model):
 
 
 def tag_factory(
-    my_database: peewee.SqliteDatabase, MyObject: types.MyObjectType
+    my_database: peewee.SqliteDatabase, MyObject: Type[types.MyObjectType]
 ) -> Tuple[Type[Tag], Type[ObjectTag]]:
     """
     Creates two classes used to manipulate tags specific to MyObject and the associated

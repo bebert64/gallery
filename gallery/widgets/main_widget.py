@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Module defining the :class:`MainWidget`.
+Defines :
+ The MainWidget class.
+
+ The add_cell_dimension_menu convenience method, allowing to add a menu with options
+ to modify the cell dimensions to a main_window which has a main_widget attribute.
+
 """
 
 from __future__ import annotations
@@ -128,12 +133,8 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
         self.tabs_widget.addTab(tab_widget, widget_item.name)
         self.tabs_widget.setCurrentWidget(tab_widget)
 
-    def _create_tab_from_widget_item(
-        self, widget_item: WidgetItem
-    ) -> TabWidget:
-        query_parameters = QueryParameters.create_from_widget_item(
-            widget_item
-        )
+    def _create_tab_from_widget_item(self, widget_item: WidgetItem) -> TabWidget:
+        query_parameters = QueryParameters.create_from_widget_item(widget_item)
         tab_widget = TabWidget.create_tab_widget(self, query_parameters)
         tab_widget.name = widget_item.name
         tab_widget.signals.my_objects_modified.connect(  # type: ignore
@@ -187,7 +188,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
 
     def _create_view(self) -> View:
         current_tab = self.tabs_widget.currentWidget()
-        view = self.config.MyView(name=current_tab.name)
+        view = self.config.models.MyView(name=current_tab.name)
         query_parameters = current_tab.query_parameters
         view.query_string = query_parameters.get_query_string()
         return view
@@ -206,9 +207,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
             status_bar = None
         return status_bar
 
-    def _update_status_bar(
-        self
-    ) -> None:
+    def _update_status_bar(self) -> None:
         self._clear_status_bar()
         status_bar = self._get_status_bar()
         if status_bar is not None:
@@ -236,6 +235,37 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
         Parameters
         ----------
         cell_dimension
+
         """
-        self.config.cell_dimension = cell_dimension
+        self.config.change_cell_dimension(cell_dimension)
         self._refresh_current_tab()
+
+
+def add_cell_dimension_menu(main_window: QtWidgets.QMainWindow) -> None:
+    """Convenience method to add a menu to a MainWindow with the cell dimensions."""
+    assert hasattr(main_window, "main_widget")
+    menu_folder = _create_menu_folder(main_window, "Cellules")
+    for cell_dimension in CellDimension:
+        _create_and_connect_cell_dimension_action(
+            menu_folder, cell_dimension, main_window
+        )
+
+
+def _create_menu_folder(
+    main_window: QtWidgets.QMainWindow, menu_name: str
+) -> QtWidgets.QMenu:
+    menu_bar = main_window.menuBar()
+    menu_folder = menu_bar.addMenu(menu_name)
+    return menu_folder
+
+
+def _create_and_connect_cell_dimension_action(
+    menu_folder: QtWidgets.QMenu,
+    cell_dimension: CellDimension,
+    main_window: QtWidgets.QMainWindow,
+) -> None:
+    action_name = f"{cell_dimension.name} cells"
+    new_action = QtGui.QAction(action_name, main_window)
+    main_widget: MainWidget = main_window.main_widget
+    new_action.triggered.connect(lambda: main_widget.modify_cell_zoom(cell_dimension))  # pylint: disable=no-member
+    menu_folder.addAction(new_action)

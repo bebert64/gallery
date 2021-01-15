@@ -68,7 +68,7 @@ class TagMenu(QtWidgets.QMenu):  # pylint: disable=too-few-public-methods
 
     def _create_tag(self, tag_type: str) -> tag.Tag:
         widget_item_tag = self._get_widget_item_tag()
-        MyTag = self.parent().config.MyTag
+        MyTag = self.parent().config.models.MyTag
         new_tag = MyTag(name="New tag", parent=widget_item_tag, type=tag_type)
         return new_tag
 
