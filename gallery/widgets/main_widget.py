@@ -11,7 +11,7 @@ Defines :
 
 from __future__ import annotations
 
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Type, Any
 
 import peewee
 from PySide6 import QtWidgets, QtGui
@@ -60,7 +60,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
 
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent: QtWidgets.QWidget):
         super().__init__(parent)
         self.tag_tree_widget: TagTreeWidget
         self.tabs_widget: QtWidgets.QTabWidget
@@ -70,11 +70,11 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
 
     @classmethod
     def create_main_widget(
-        cls,
-        parent,
+        cls: Type[MyCustomWidget],
+        parent: QtWidgets.QWidget,
         database: peewee.SqliteDatabase,
         MyObject: types.MyObjectType,
-        options=None,
+        options: Optional[Dict[str, Any]]=None,
     ) -> MainWidget:
         """
         Factory method to create a main widget.
