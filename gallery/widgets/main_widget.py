@@ -53,8 +53,8 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
     -------
     create_main_widget
 
-    Attention
-    ---------
+    Warning
+    -------
     This widget should not be instantiated directly, but rather through the factory
     method create_main_widget.
 
