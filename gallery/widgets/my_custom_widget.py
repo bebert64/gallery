@@ -151,7 +151,7 @@ class MyCustomWidget:
         # to access protected members of the class.
         # pylint: disable=protected-access
         widget = cls._create_widget_using_loader(parent)
-        assert isinstance(widget, MyCustomWidget)
+        assert isinstance(widget, cls)
         assert isinstance(widget, QtWidgets.QWidget)
         widget._set_config()
         return widget

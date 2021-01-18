@@ -83,7 +83,7 @@ class CellWidget(QtWidgets.QWidget, MyCustomWidget):
         # to access protected members of the class.
         # pylint: disable = protected-access
         cell_widget = cls.create_widget(parent)
-        assert isinstance(cell_widget, CellWidget)
+        assert isinstance(cell_widget, cls)
         cell_widget.my_object = my_object
         cell_widget._init_graphical_aspects()
         cell_widget.signals.clicked.connect(handle_cell_clicked)  # type: ignore
@@ -309,8 +309,8 @@ class TabWidget(QtWidgets.QWidget, MyCustomWidget):
         # create_tab_widget is a factory method, and should therefore be allowed
         # to access protected members of the class.
         # pylint: disable = protected-access
-        tab_widget = super().create_widget(parent)
-        assert isinstance(tab_widget, TabWidget)
+        tab_widget = cls.create_widget(parent)
+        assert isinstance(tab_widget, cls)
         tab_widget.tab_parameters = TabParameters(tab_widget)
         tab_widget.query_parameters = query_parameters
         tab_widget.scroll_area.verticalScrollBar().valueChanged.connect(

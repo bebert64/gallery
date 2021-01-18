@@ -60,8 +60,8 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
 
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent):
+        super().__init__(parent)
         self.tag_tree_widget: TagTreeWidget
         self.tabs_widget: QtWidgets.QTabWidget
         self.config: Config
@@ -90,8 +90,8 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
         # create_main_widget is a factory method, and should therefore be allowed
         # to access protected members of the class.
         # pylint: disable = protected-access
-        main_widget = super().create_widget(parent)
-        assert isinstance(main_widget, MainWidget)
+        main_widget = cls.create_widget(parent)
+        assert isinstance(main_widget, cls)
         main_widget.config = Config(database, MyObject, options)
         main_widget._add_subwidgets()
         main_widget.update_status_bar()

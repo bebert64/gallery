@@ -424,7 +424,7 @@ class TagTreeWidget(
         # to access protected members of the class.
         # pylint: disable = protected-access
         tag_tree_widget = cls.create_widget(parent)
-        assert isinstance(tag_tree_widget, TagTreeWidget)
+        assert isinstance(tag_tree_widget, cls)
         tag_tree_widget.redraw_tree()
         tag_tree_widget._init_brushes()
         tag_tree_widget._connect_events()

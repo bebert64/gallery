@@ -36,49 +36,43 @@ class MyDrag(QtGui.QDrag):
         self._set_empty_mime_data()
         self._store_self_in_main_widget()
 
-    @classmethod
-    def _get_resource_from_modifiers(cls, resource_name):
+    def _get_resource_from_modifiers(self, resource_name):
         # A QtCore.Qt.KeyboardModifiers is not hashable, and we can't use directly as
         # a key for the dict. However, when checked against a QtCore.Qt.KeyboardModifier
         # (singular...), it does return True.
         # So, we use the KeyboardModifier as key, and check the KeyboardModifiers
         # against all of them.
-        resources_dict = cls._get_resources_dict_from_modifiers()
+        resources_dict = self._get_resources_dict_from_modifiers()
         resource = resources_dict[resource_name]
         return resource
 
-    @classmethod
-    def _get_resources_dict_from_modifiers(cls,):
-        resources_dict = cls._modifiers_dict["Default"]
-        keys_modifiers = cls._get_keys_modifiers()
+    def _get_resources_dict_from_modifiers(self,):
+        resources_dict = self._modifiers_dict["Default"]
+        keys_modifiers = self._get_keys_modifiers()
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         for key in keys_modifiers:
             if key == modifiers:
-                resources_dict = cls._modifiers_dict[key]
+                resources_dict = self._modifiers_dict[key]
         return resources_dict
 
-    @classmethod
-    def _get_keys_modifiers(cls):
+    def _get_keys_modifiers(self):
         keys_modifiers = [
             key
-            for key in cls._modifiers_dict
+            for key in self._modifiers_dict
             if isinstance(key, QtCore.Qt.KeyboardModifier)
         ]
         return keys_modifiers
 
-    @classmethod
-    def _get_cursor_name_from_modifiers(cls) -> str:
-        cursor_name = cls._get_resource_from_modifiers("cursor_name")
+    def _get_cursor_name_from_modifiers(self) -> str:
+        cursor_name = self._get_resource_from_modifiers("cursor_name")
         return cursor_name
 
-    @classmethod
-    def _get_method_name_from_modifiers(cls) -> str:
-        method_name = cls._get_resource_from_modifiers("method_name")
+    def _get_method_name_from_modifiers(self) -> str:
+        method_name = self._get_resource_from_modifiers("method_name")
         return method_name
 
-    @classmethod
-    def _get_need_apply_modifiers(cls) -> str:
-        need_apply_modifiers = cls._get_resource_from_modifiers("is_modifier")
+    def _get_need_apply_modifiers(self) -> str:
+        need_apply_modifiers = self._get_resource_from_modifiers("is_modifier")
         return need_apply_modifiers
 
     def _set_empty_mime_data(self) -> None:
