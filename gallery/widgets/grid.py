@@ -14,11 +14,12 @@ import operator
 from typing import List, Callable, Tuple
 
 from PySide6 import QtWidgets, QtCore, QtGui
+from utils.my_custom_widget import MyCustomWidget
 
+import gallery.config_gallery.config_gallery as config_gallery
 import gallery.types as types
 import gallery.widgets.drag as drag
 import gallery.widgets.main_widget as main_widget
-from gallery.widgets.my_custom_widget import MyCustomWidget
 from gallery.widgets.query import QueryParameters
 from gallery.widgets.widget_parameters import TabParameters
 
@@ -51,6 +52,8 @@ class CellWidget(QtWidgets.QWidget, MyCustomWidget):
     the create_cell_widget factory method.
 
     """
+
+    config: config_gallery.ConfigGallery
 
     def __init__(self, parent: TabWidget) -> None:
         super().__init__(parent)
@@ -284,6 +287,8 @@ class TabWidget(QtWidgets.QWidget, MyCustomWidget):
     the create_cell_widget factory method.
 
     """
+
+    config: config_gallery.ConfigGallery
 
     def __init__(self, parent: QtWidgets.QWidget):
         super().__init__(parent)

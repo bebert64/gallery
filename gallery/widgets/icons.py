@@ -8,11 +8,10 @@ from typing import Dict, Type, Union
 
 from PySide6 import QtGui
 
-from gallery.config.config import Config
+from utils.functions import get_data_folder
 
 _icons: Dict[str, QtGui.QIcon] = {}
 _pixmaps: Dict[str, QtGui.QPixmap] = {}
-_package_folder = Config.get_package_folder()
 
 ResourceType = Union[QtGui.QIcon, QtGui.QPixmap]
 ResourceDict = Dict[str, ResourceType]
@@ -51,7 +50,7 @@ def _create_resource(name: str, resource_class: Type[ResourceType]):
 
 
 def _get_resource_file_path(name: str) -> Path:
-    resource_folder_path = _package_folder / "widgets" / "icons"
+    resource_folder_path = get_data_folder(_get_resource_file_path) / "icons"
     resource_file_name = name + ".xpm"
     resource_file_path = resource_folder_path / resource_file_name
     return resource_file_path

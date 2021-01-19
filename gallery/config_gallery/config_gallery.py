@@ -8,14 +8,13 @@ Defines :
 
 """
 
-import pathlib
-import sys
-from copy import copy
 from enum import Enum
-from typing import Type, Any, Dict, Optional, Union, List
+from typing import Type, Dict, Optional, Union
 
 import peewee
-import toml
+from utils.config import Config
+from utils.functions import get_data_folder
+
 from gallery.models.tags import tag_factory
 from gallery.models.views import View
 
@@ -54,7 +53,7 @@ class CellDimension(Enum):
     """A extra large cell will have dimensions 50% larger than default."""
 
 
-class Config:
+class ConfigGallery(Config):
     """
     The Config object holds information we need to share among the various objects.
 
@@ -80,10 +79,6 @@ class Config:
     cell_width
     cell_height
 
-    Methods
-    -------
-    get_package_folder
-
     Error
     -----
     AttributeError
@@ -92,67 +87,25 @@ class Config:
 
     """
 
-    _reserved_attribute_names: List[str]
-
     def __init__(
         self,
         database: peewee.SqliteDatabase,
         MyObject: Type[peewee.Model],
         options: Optional[Options] = None,
-    ):
+    ) -> None:
+        toml_path = ConfigGallery._get_toml_file_path()
+        super().__init__(toml_path, options)
         self.database: peewee.SqliteDatabase = database
         self.cell_dimension = CellDimension.medium
         self._has_changed_cell_dimension: bool = False
         self.models: Models = Models()
-        self._add_attributes(MyObject, options)
-
-    def _add_attributes(self, MyObject, options):
         self._add_tag_related_attributes(MyObject)
-        self._reserved_attribute_names = self._get_reserved_attribute_names()
-        self._add_attributes_from_toml_file()
-        self._add_attributes_from_options(options)
-
-    def _get_reserved_attribute_names(self) -> List[str]:
-        # To include all reserved names, must be run AFTER _add_tag_related_attributes
-        return copy(list(self.__dict__.keys()))
-
-    # By default, mypy complains that the attributes created dynamically by
-    # the _add_attributes_from_toml_file method do not exist.
-    # redefining __getattr__ with types makes mypy stop complaining.
-    def __getattr__(self, name: str) -> Any:
-        try:
-            getattr(super(), name)
-        except AttributeError as error:
-            raise AttributeError(
-                f"Parameter {name} has not been found in the config.toml file."
-            ) from error
 
     @staticmethod
-    def get_package_folder() -> pathlib.Path:
-        """
-        The path to the package folder.
-
-        If the package has been bundled in a .exe file, returns the application folder.
-        """
-        is_application_frozen = getattr(sys, "frozen", False)
-        if is_application_frozen:
-            package_path = Config._get_frozen_package_path()
-        else:
-            package_path = Config._get_unfrozen_package_path()
-        return package_path
-
-    @staticmethod
-    def _get_frozen_package_path() -> pathlib.Path:
-        app_file_path = pathlib.Path(sys.executable)
-        package_path = app_file_path.parent
-        return package_path
-
-    @staticmethod
-    def _get_unfrozen_package_path() -> pathlib.Path:
-        file_path = pathlib.Path(__file__)
-        config_folder_path = file_path.parent
-        package_path = config_folder_path.parent
-        return package_path
+    def _get_toml_file_path():
+        data_folder = get_data_folder(ConfigGallery)
+        toml_file_path = data_folder / "config.toml"
+        return toml_file_path
 
     def _add_tag_related_attributes(self, MyObject: Type[peewee.Model]) -> None:
         self._add_attributes_linked_to_my_object(MyObject)
@@ -171,38 +124,6 @@ class Config:
         self.models.MyObjectTag = MyObjectTag
         self.models.MyObject.MyTag = self.models.MyTag
         self.models.MyObject.MyObjectTag = self.models.MyObjectTag
-
-    def _add_attributes_from_toml_file(self) -> None:
-        toml_file_path = self.get_package_folder() / "config" / "config.toml"
-        toml_dict = toml.load(toml_file_path)
-        for attribute_name, attribute_value in toml_dict.items():
-            self._add_attribute(attribute_name, attribute_value)
-
-    def _add_attributes_from_options(self, options: Optional[Options]):
-        if options is not None:
-            for attribute_name, attribute_value in self.options.items():
-                self._add_attribute(attribute_name, attribute_value)
-
-    def _add_attribute(self, attribute_name: str, attribute_value: Any) -> None:
-        is_attribute_reserved = self._is_attribute_reserved(attribute_name)
-        if is_attribute_reserved:
-            self._raise_attribute_exists_error(attribute_name)
-        setattr(self, attribute_name, attribute_value)
-
-    def _is_attribute_reserved(self, attribute_name):
-        return attribute_name in self._reserved_attribute_names
-
-    def _raise_attribute_exists_error(self, attribute_name: str) -> None:
-        error_message = f"""
-The attribute name "{attribute_name}" is reserved by the config file, and cannot be
-given to any attribute from the config.toml file. Please rename it before restarting
-the application."""
-        error_message_formatted = self._format_error_message(error_message)
-        raise AttributeError(error_message_formatted)
-
-    @staticmethod
-    def _format_error_message(error_message: str) -> str:
-        return error_message.replace("\n", " ").strip()
 
     @property
     def cell_width(self) -> int:
@@ -235,6 +156,7 @@ the application."""
 class Models:  # pylint: disable=too-few-public-methods
 
     """Simple namespace to regroup all the peewee Model object in the config file."""
+
     # A "real" SimpleNamespace object doesn't allow to type its own member.
 
     MyObject: Type[peewee.Model]

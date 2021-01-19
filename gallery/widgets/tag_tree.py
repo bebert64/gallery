@@ -25,16 +25,16 @@ import time
 from typing import List, Set, Dict, Optional, Type
 
 from PySide6 import QtWidgets, QtGui, QtCore
+from utils.my_custom_widget import MyCustomWidget
 
 import gallery.types as types
 import gallery.widgets.drag as drag
 import gallery.widgets.main_widget as main_widget
-from gallery.config.config import Config
+from gallery.config_gallery.config_gallery import ConfigGallery
 from gallery.models.tags import Tag
 from gallery.models.views import View
 from gallery.widgets import icons
 from gallery.widgets.menus import TagMenu
-from gallery.widgets.my_custom_widget import MyCustomWidget
 from gallery.widgets.query import QueryParameters
 
 
@@ -64,7 +64,7 @@ class WidgetItem(QtWidgets.QTreeWidgetItem):
         super().__init__(parent)
         self.widget_item_id: types.WidgetItemId
         self.name: str = ""
-        self.config: Config = parent.config
+        self.config: ConfigGallery = parent.config
 
     def _set_name(self, name: str) -> None:
         self.name = name
@@ -396,6 +396,8 @@ class TagTreeWidget(
         "tag": WidgetItemTag,
         "folder": WidgetItemTagFolder,
     }
+
+    config: ConfigGallery
 
     def __init__(self, parent: QtWidgets.QWidget) -> None:
         super().__init__(parent)

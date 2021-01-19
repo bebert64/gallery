@@ -11,17 +11,18 @@ Defines :
 
 from __future__ import annotations
 
-from typing import List, Dict, Optional, Type, Any
+from typing import List, Dict, Optional, Type
 
 import peewee
 from PySide6 import QtWidgets, QtGui
+from utils.config import Options
+from utils.my_custom_widget import MyCustomWidget
 
 import gallery.types as types
-from gallery.config.config import Config, CellDimension
+from gallery.config_gallery.config_gallery import ConfigGallery, CellDimension
 from gallery.models.views import View
 from gallery.widgets.drag import MyDrag
 from gallery.widgets.grid import TabWidget
-from gallery.widgets.my_custom_widget import MyCustomWidget
 from gallery.widgets.query import QueryParameters
 from gallery.widgets.tag_tree import (
     TagTreeWidget,
@@ -64,7 +65,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
         super().__init__(parent)
         self.tag_tree_widget: TagTreeWidget
         self.tabs_widget: QtWidgets.QTabWidget
-        self.config: Config
+        self.config: ConfigGallery
         self.drag_object: Optional[MyDrag] = None
         self._key_pressed: List[int] = []
 
@@ -74,7 +75,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
         parent: QtWidgets.QWidget,
         database: peewee.SqliteDatabase,
         MyObject: types.MyObjectType,
-        options: Optional[Dict[str, Any]]=None,
+        options: Optional[Options] = None,
     ) -> MainWidget:
         """
         Factory method to create a main widget.
@@ -92,7 +93,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
         # pylint: disable = protected-access
         main_widget = cls.create_widget(parent)
         assert isinstance(main_widget, cls)
-        main_widget.config = Config(database, MyObject, options)
+        main_widget.config = ConfigGallery(database, MyObject, options)
         main_widget._add_subwidgets()
         main_widget.update_status_bar()
         return main_widget
@@ -267,5 +268,7 @@ def _create_and_connect_cell_dimension_action(
     action_name = f"{cell_dimension.name} cells"
     new_action = QtGui.QAction(action_name, main_window)
     main_widget: MainWidget = main_window.main_widget
-    new_action.triggered.connect(lambda: main_widget.modify_cell_zoom(cell_dimension))  # pylint: disable=no-member
+    new_action.triggered.connect(  # pylint: disable=no-member
+        lambda: main_widget.modify_cell_zoom(cell_dimension)
+    )
     menu_folder.addAction(new_action)

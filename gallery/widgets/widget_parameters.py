@@ -21,7 +21,7 @@ from enum import IntEnum
 
 import gallery.widgets.grid as grid
 import gallery.widgets.main_widget as main_widget
-from gallery.config.config import Config
+from gallery.config_gallery.config_gallery import ConfigGallery
 
 Pixel = int
 
@@ -291,7 +291,7 @@ class TabParameters:
         self.current_parameters: CurrentParameters = CurrentParameters()
 
     @property
-    def config(self) -> Config:
+    def config(self) -> ConfigGallery:
         """The Config of the TabWidget, shared with the subwidgets' parameters."""
         return self.tab_widget.config
 
