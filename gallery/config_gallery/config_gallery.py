@@ -104,7 +104,7 @@ class ConfigGallery(Config):
     @staticmethod
     def _get_toml_file_path():
         data_folder = get_data_folder(ConfigGallery)
-        toml_file_path = data_folder / "config.toml"
+        toml_file_path = data_folder / "config_gallery.toml"
         return toml_file_path
 
     def _add_tag_related_attributes(self, MyObject: Type[peewee.Model]) -> None:
