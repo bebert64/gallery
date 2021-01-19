@@ -1,0 +1,25 @@
+# Technical Parameters
+# ----------------------------------------------------------------------------
+#
+# The number of pixel the mouse has to move before a drag action is initiated.
+cell_min_drag_distance = 15
+
+# The amount of time under which two clicks are considered one double click, in seconds.
+double_click_time_limit = 0.5
+
+# Color of the cell overlay
+cell_overlay_color = "rgba(0, 120, 255, 50)"
+
+# Margin (in pixels) for the grid widget (width of the scroll bar)
+scrollbar_width = 20
+# Margin (in pixels) between the grid container and the grid (difference between the
+# grid container's width and the cells' width * the number of rows)
+grid_vertical_margin = 50
+
+# Tag Tree minimum width
+tag_tree_min_width = 150
+
+hovered_background_color = "#6c92b8"
+
+cell_width_default = 270
+cell_height_default = 180
