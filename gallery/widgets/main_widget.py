@@ -93,7 +93,6 @@ class MainWidget(QtWidgets.QWidget, MyCustomGalleryWidget):
         # to access protected members of the class.
         # pylint: disable = protected-access
         main_widget = cls.create_widget(parent)
-        print(type(main_widget))
         assert isinstance(main_widget, cls)
         main_widget.config = ConfigGallery(options)
         main_widget.models = GalleryModels(database, MyObject)
