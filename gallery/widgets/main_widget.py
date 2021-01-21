@@ -16,19 +16,20 @@ from typing import List, Dict, Optional, Type
 import peewee
 from PySide6 import QtWidgets, QtGui
 from utils.config import Options
-from utils.my_custom_widget import MyCustomWidget
 
 import gallery.types as types
 from gallery.config_gallery.config_gallery import ConfigGallery, CellDimension
 from gallery.models.views import View
 from gallery.widgets.drag import MyDrag
 from gallery.widgets.grid import TabWidget
+from gallery.widgets.my_custom_gallery_widget import MyCustomGalleryWidget
 from gallery.widgets.query import QueryParameters
 from gallery.widgets.tag_tree import (
     TagTreeWidget,
     WidgetItem,
     WidgetItemView,
 )
+from gallery.models.gallery_models import GalleryModels
 
 KEYS: Dict[str, int] = {
     "CTRL": 16777249,
@@ -38,7 +39,7 @@ KEYS: Dict[str, int] = {
 """A dictionary mapping description to their code as :class:`QKeyPressed` event."""
 
 
-class MainWidget(QtWidgets.QWidget, MyCustomWidget):
+class MainWidget(QtWidgets.QWidget, MyCustomGalleryWidget):
     """
     The main widget to create, composed of the tag tree on the left, and a tab widget
     on the right, with each tab containing a grid of objects.
@@ -71,7 +72,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
 
     @classmethod
     def create_main_widget(
-        cls: Type[MyCustomWidget],
+        cls: Type[MyCustomGalleryWidget],
         parent: QtWidgets.QWidget,
         database: peewee.SqliteDatabase,
         MyObject: types.MyObjectType,
@@ -92,8 +93,10 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
         # to access protected members of the class.
         # pylint: disable = protected-access
         main_widget = cls.create_widget(parent)
+        print(type(main_widget))
         assert isinstance(main_widget, cls)
-        main_widget.config = ConfigGallery(database, MyObject, options)
+        main_widget.config = ConfigGallery(options)
+        main_widget.models = GalleryModels(database, MyObject)
         main_widget._add_subwidgets()
         main_widget.update_status_bar()
         return main_widget
@@ -189,7 +192,7 @@ class MainWidget(QtWidgets.QWidget, MyCustomWidget):
 
     def _create_view(self) -> View:
         current_tab = self.tabs_widget.currentWidget()
-        view = self.config.models.MyView(name=current_tab.name)
+        view = self.models.MyView(name=current_tab.name)
         query_parameters = current_tab.query_parameters
         view.query_string = query_parameters.get_query_string()
         return view

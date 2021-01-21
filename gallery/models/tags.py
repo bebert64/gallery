@@ -13,7 +13,7 @@ Defines :
 from __future__ import annotations
 
 from functools import partial
-from typing import Tuple, Type, Set, List
+from typing import Tuple, Type, Set, List, Callable
 
 import peewee
 from peewee import Model, ForeignKeyField, CharField, AutoField
@@ -166,9 +166,9 @@ def tag_factory(
     return MyTag, MyObjectTag
 
 
-def add_get_tags_method(my_object: Model) -> None:
+def add_tag_related_method(my_object: Model) -> None:
     """
-    Convenience method to bind a get_tags method to a used defined object.
+    Convenience method to bind a get_tags and add_tag method to a used defined object.
 
     Error
     -----
@@ -188,7 +188,18 @@ def add_get_tags_method(my_object: Model) -> None:
 
     """
 
-    _assert_can_add_get_tags_method(my_object)
+    _add_get_tags_method(my_object)
+    _add_add_tag_method(my_object)
+
+
+def _add_add_tag_method(my_object: Model) -> None:
+    def add_tag(self, tag: Tag) -> None:
+        self.MyObjectTag(my_object=self, tag=tag).save()
+
+    _add_method_to_my_object(my_object, add_tag)
+
+
+def _add_get_tags_method(my_object: Model) -> None:
     my_object_class = type(my_object)
 
     def get_tags(self: Model) -> Set[Tag]:
@@ -200,11 +211,16 @@ def add_get_tags_method(my_object: Model) -> None:
         )
         return tags
 
-    get_tags_bound_to_my_object = partial(get_tags, my_object)
-    setattr(my_object, "get_tags", get_tags_bound_to_my_object)
+    _add_method_to_my_object(my_object, get_tags)
 
 
-def _assert_can_add_get_tags_method(my_object):
+def _add_method_to_my_object(my_object: Model, method: Callable) -> None:
+    _assert_can_add_tag_related_method(my_object)
+    method_bound_to_my_object = partial(method, my_object)
+    setattr(my_object, method.__name__, method_bound_to_my_object)
+
+
+def _assert_can_add_tag_related_method(my_object: Model) -> None:
     assert hasattr(my_object, "MyTag")
     assert hasattr(my_object, "MyObjectTag")
     assert isinstance(my_object, Model)

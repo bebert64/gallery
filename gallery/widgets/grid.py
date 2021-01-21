@@ -14,17 +14,17 @@ import operator
 from typing import List, Callable, Tuple
 
 from PySide6 import QtWidgets, QtCore, QtGui
-from utils.my_custom_widget import MyCustomWidget
 
 import gallery.config_gallery.config_gallery as config_gallery
 import gallery.types as types
 import gallery.widgets.drag as drag
 import gallery.widgets.main_widget as main_widget
+from gallery.widgets.my_custom_gallery_widget import MyCustomGalleryWidget
 from gallery.widgets.query import QueryParameters
 from gallery.widgets.widget_parameters import TabParameters
 
 
-class CellWidget(QtWidgets.QWidget, MyCustomWidget):
+class CellWidget(QtWidgets.QWidget, MyCustomGalleryWidget):
 
     """
     A single cell in the gallery, representing a user-defined my_object (later referenced
@@ -261,7 +261,7 @@ class CellSignals(QtCore.QObject):  # pylint: disable=too-few-public-methods
         self.cell: CellWidget = cell
 
 
-class TabWidget(QtWidgets.QWidget, MyCustomWidget):
+class TabWidget(QtWidgets.QWidget, MyCustomGalleryWidget):
 
     """
     A tab to be displayed on the right hand side of the Main Widget.

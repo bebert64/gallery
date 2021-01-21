@@ -72,9 +72,6 @@ class ConfigGallery(Config):
 
     Instance Attributes
     -------------------
-    MyTag
-    MyObjectTag
-    MyView
     cell_dimension
     cell_width
     cell_height
@@ -89,41 +86,18 @@ class ConfigGallery(Config):
 
     def __init__(
         self,
-        database: peewee.SqliteDatabase,
-        MyObject: Type[peewee.Model],
         options: Optional[Options] = None,
     ) -> None:
         toml_path = ConfigGallery._get_toml_file_path()
         super().__init__(toml_path, options)
-        self.database: peewee.SqliteDatabase = database
         self.cell_dimension = CellDimension.medium
         self._has_changed_cell_dimension: bool = False
-        self.models: Models = Models()
-        self._add_tag_related_attributes(MyObject)
 
     @staticmethod
     def _get_toml_file_path():
         data_folder = get_data_folder(ConfigGallery)
         toml_file_path = data_folder / "config_gallery.toml"
         return toml_file_path
-
-    def _add_tag_related_attributes(self, MyObject: Type[peewee.Model]) -> None:
-        self._add_attributes_linked_to_my_object(MyObject)
-        self._add_view_attribute()
-
-    def _add_view_attribute(self) -> None:
-        self.models.MyView = View
-        self.models.MyView._meta.database = (  # pylint: disable = no-member, protected-access
-            self.database
-        )
-
-    def _add_attributes_linked_to_my_object(self, MyObject: Type[peewee.Model]) -> None:
-        self.models.MyObject = MyObject
-        MyTag, MyObjectTag = tag_factory(self.database, MyObject)
-        self.models.MyTag = MyTag
-        self.models.MyObjectTag = MyObjectTag
-        self.models.MyObject.MyTag = self.models.MyTag
-        self.models.MyObject.MyObjectTag = self.models.MyObjectTag
 
     @property
     def cell_width(self) -> int:
@@ -151,15 +125,3 @@ class ConfigGallery(Config):
     def reset_has_changed_cell_dimension(self) -> None:
         """Indicates the cell dimension change has been taken into account."""
         self._has_changed_cell_dimension = False
-
-
-class Models:  # pylint: disable=too-few-public-methods
-
-    """Simple namespace to regroup all the peewee Model object in the config file."""
-
-    # A "real" SimpleNamespace object doesn't allow to type its own member.
-
-    MyObject: Type[peewee.Model]
-    MyTag: Type[peewee.Model]
-    MyObjectTag: Type[peewee.Model]
-    MyView: Type[peewee.Model]
