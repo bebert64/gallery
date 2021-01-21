@@ -9,14 +9,10 @@ Defines :
 """
 
 from enum import Enum
-from typing import Type, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
-import peewee
 from utils.config import Config
 from utils.functions import get_data_folder
-
-from gallery.models.tags import tag_factory
-from gallery.models.views import View
 
 Option = Union[int, str]
 Options = Dict[str, Option]
