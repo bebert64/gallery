@@ -145,12 +145,12 @@ def tag_factory(
             database = my_database
             table_name = "tag"
 
-        def get_my_objects(self,) -> Set[Model]:
+        def get_my_objects(self) -> Set[Model]:
             my_objects = set(
                 MyObject.select()
                 .join(MyObjectTag)
                 .join(self.__class__)
-                .where(MyTag.id == self.id)
+                .where(self.__class__.id == self.id)
             )
             return my_objects
 
