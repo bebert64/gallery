@@ -580,6 +580,14 @@ class TabWidget(QtWidgets.QWidget, MyCustomGalleryWidget):
         self.selection.remove(my_object_id)
         cell.overlay.hide()
 
+    def select_all(self) -> None:
+        """Select all objects in the grid."""
+        self.selection = [
+            my_object.id for my_object in self.query_parameters.my_objects
+        ]
+        for cell in self.cells:
+            cell.overlay.show()
+
     # def cell_hovered(self) -> Optional[CellWidget]:
     #     """The cell being hovered, or None if none are hovered."""
     #     cursor = QtGui.QCursor()

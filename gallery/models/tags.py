@@ -15,9 +15,10 @@ from __future__ import annotations
 from functools import partial
 from typing import Tuple, Type, Set, List, Callable
 
-import gallery.types as types
 import peewee
 from peewee import Model, ForeignKeyField, CharField, AutoField, CompositeKey
+
+import gallery.types as types
 
 
 class Tag(Model):
@@ -161,7 +162,7 @@ def tag_factory(
         class Meta:  # pylint: disable=missing-class-docstring, too-few-public-methods
             database = my_database
             table_name = MyObject.__name__.lower() + "_tag"
-            primary_key = CompositeKey('my_object', 'tag')
+            primary_key = CompositeKey("my_object", "tag")
 
     return MyTag, MyObjectTag
 

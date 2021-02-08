@@ -35,6 +35,7 @@ KEYS: Dict[str, int] = {
     "CTRL": 16777249,
     "S": 83,
     "F5": 16777268,
+    "A": 65,
 }
 """A dictionary mapping description to their code as :class:`QKeyPressed` event."""
 
@@ -172,6 +173,8 @@ class MainWidget(QtWidgets.QWidget, MyCustomGalleryWidget):
             self._refresh_current_tab()
         if all(key in self._key_pressed for key in [KEYS["CTRL"], KEYS["S"]]):
             print("saving")
+        if all(key in self._key_pressed for key in [KEYS["CTRL"], KEYS["A"]]):
+            self.tabs_widget.currentWidget().select_all()
 
     def _refresh_current_tab(self) -> None:
         current_tab: TabWidget = self.tabs_widget.currentWidget()
